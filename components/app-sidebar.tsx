@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/sidebar"
 
 import { LogoWhiteIcon } from "@/components/icons/LogoWhiteIcon";
+import { useAuth } from "@/components/auth-context";
 
 const data = {
   user: {
@@ -47,27 +48,27 @@ const data = {
   navMain: [
     {
       title: "dashboard",
-      url: "#",
+      url: "/dashboard",
       icon: IconDashboard,
     },
     {
       title: "transações",
-      url: "#",
+      url: "/transacoes",
       icon: IconCreditCard,
     },
     {
       title: "projetos",
-      url: "#",
+      url: "/projetos",
       icon: IconFolder,
     },
     {
       title: "analytics",
-      url: "#",
+      url: "/analytics",
       icon: IconChartBar,
     },
     {
       title: "patrimônios",
-      url: "#",
+      url: "/patrimonios",
       icon: IconCar,
     },
   ],
@@ -156,6 +157,11 @@ const data = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { user } = useAuth();
+
+  // Se não estiver logado, pode exibir um loading ou placeholder
+  if (!user) return null;
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
@@ -179,7 +185,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavSecondary items={data.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser
+          user={{
+            name: user.displayName || user.email || "Usuário",
+            email: user.email || "",
+            avatar: user.photoURL || "/avatars/shadcn.jpg",
+          }}
+        />
       </SidebarFooter>
     </Sidebar>
   )
